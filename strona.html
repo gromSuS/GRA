@@ -198,7 +198,7 @@
     <input type="text" id="newChallenge" placeholder="Wpisz wyzwanie">
     <button class="button challenge-btn" onclick="addChallenge()">Dodaj wyzwanie</button>
     <h3></h3>
-    <button class="button reset-btn" onclick="resetData()">Restart</button>
+    <button class="button reset-btn" onclick="resetData()">Zresetuj grę</button>
 
     <p id="message"></p>
   </div>
@@ -523,6 +523,7 @@
     saveArray(`challenges_${difficulty}`, challenges);
 
     currentPlayer = 0;
+    currentPlayer = Math.floor(Math.random() * playerNames.length);
     document.getElementById("playerName").innerText = playerNames[currentPlayer];
     document.getElementById("playerSetup").style.display = "none";
     document.getElementById("gameArea").style.display = "block";
@@ -638,7 +639,6 @@ if ("serviceWorker" in navigator) {
     console.error("Błąd rejestracji Service Workera:", error);
   });
 }
-	  currentPlayer = Math.floor(Math.random() * playerNames.length);
 
 </script>
 
