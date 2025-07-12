@@ -576,6 +576,11 @@
 	alert("To pytanie już istnieje!");
 	return;
     }
+	  if (questions.map(q => q.toLowerCase()).includes(newQuestion.toLowerCase())) {
+  alert("To pytanie już istnieje!");
+  return;
+}
+
 	  if (newQuestion) {
       questions.push(newQuestion);
       saveArray(`questions_${currentDifficulty}`, questions);
@@ -591,11 +596,14 @@
     }
   }
   function resetData() {
-	localStorage.clear();
-	alert("Wszystkie dane zostały usunięte.");
-  	location.reload();
-  }
-
+  Object.keys(localStorage).forEach(key => {
+    if (key.startsWith("questions_") || key.startsWith("challenges_") || key.startsWith("user_")) {
+      localStorage.removeItem(key);
+    }
+  });
+  alert("Dane gry zostały zresetowane.");
+  location.reload();
+}
 
   function addChallenge() {
     const newChallenge = document.getElementById("newChallenge").value.trim();
@@ -603,6 +611,11 @@
 	alert("To wyzwanie już istnieje!");
 	return;
     }
+	  if (challenges.map(q => q.toLowerCase()).includes(newChallenge.toLowerCase())) {
+  alert("To wyzwanie już istnieje!");
+  return;
+}
+
 	  if (newChallenge) {
       challenges.push(newChallenge);
       saveArray(`challenges_${currentDifficulty}`, challenges);
@@ -625,6 +638,7 @@ if ("serviceWorker" in navigator) {
     console.error("Błąd rejestracji Service Workera:", error);
   });
 }
+	  currentPlayer = Math.floor(Math.random() * playerNames.length);
 
 </script>
 
