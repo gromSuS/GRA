@@ -1,7 +1,7 @@
 {
   "name": "Pytanie czy Wyzwanie",
   "short_name": "Pyt/Wyz",
-  "start_url": ".",
+  "start_url": "https://github.com/gromSuS/GRA/strona",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#7873f5",
