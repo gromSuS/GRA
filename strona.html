@@ -1,0 +1,408 @@
+﻿<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Pytanie czy Wyzwanie</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      text-align: center;
+      background: linear-gradient(135deg, #ff6ec4, #7873f5);
+      background-size: 400% 400%;
+      animation: partyBG 5s ease infinite;
+    }
+
+    @keyframes partyBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    h1 {
+      margin-top: 30px;
+      color: #fff;
+      text-shadow: 2px 2px 4px #000;
+    }
+
+    .button {
+      padding: 15px 30px;
+      margin: 10px;
+      font-size: 18px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .question-btn { background-color: #007bff; color: white; }
+    .challenge-btn { background-color: #28a745; color: white; }
+    .reset-btn { background-color: red; color: white; }
+    .next-btn { background-color: #6c757d; color: white; }
+    .button:hover { opacity: 0.9; }
+
+    #output {
+      margin-top: 30px;
+      font-size: 22px;
+      color: #fff;
+      max-width: 80%;
+      text-shadow: 1px 1px 2px #000;
+    }
+
+    .form-container {
+      margin-top: 30px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    input, select {
+      width: 90%;
+      padding: 10px;
+      margin: 10px auto;
+      display: block;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .player-info {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #fff;
+      text-shadow: 1px 1px 2px #000;
+    }
+
+    #history {
+      margin-top: 30px;
+      text-align: left;
+      width: 80%;
+      max-width: 600px;
+      background: rgba(255,255,255,0.8);
+      padding: 10px 20px;
+      border-radius: 10px;
+    }
+
+    #history ul {
+      padding-left: 20px;
+    }
+
+    #message {
+      margin-top: 10px;
+      font-weight: bold;
+      color: green;
+    }
+/* MOBILE FRIENDLY STYLES */
+@media (max-width: 600px) {
+  body {
+    padding: 10px;
+    background-size: 600% 600%;
+  }
+
+  h1 {
+    font-size: 24px;
+    margin-top: 20px;
+  }
+
+  .button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  .form-container {
+    width: 100%;
+    padding: 15px;
+  }
+
+  input, select {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  #output {
+    font-size: 18px;
+    margin-top: 20px;
+  }
+
+  .player-info {
+    font-size: 16px;
+  }
+
+  #history {
+    width: 100%;
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  #history ul {
+    padding-left: 15px;
+  }
+
+  #message {
+    font-size: 14px;
+  }
+}
+  </style>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#7873f5">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="icon" sizes="192x192" href="icon-192.png">
+
+</head>
+<body>
+
+  <h1>pytanie czy WYZWANIE?</h1>
+
+  <div id="playerSetup">
+    <h3>Podaj nazwy graczy (oddzielone przecinkami):</h3>
+    <input type="text" id="playerNamesInput" placeholder="np. Anal, Kasia, Ćpun">
+
+    <h3>Wybierz poziom trudności:</h3>
+    <select id="difficulty">
+      <option value="easy">SŁABE</option>
+      <option value="medium">INFORMACYJNE</option>
+      <option value="hard">+18</option>
+    </select>
+
+    <button class="button next-btn" onclick="startGame()">Rozpocznij grę</button>
+  </div>
+
+  <div class="player-info" style="display:none;" id="gameArea">
+    Tura gracza: <strong id="playerName">Gracz 1</strong>
+  </div>
+
+  <div id="gameControls" style="display:none;">
+    <button class="button question-btn" onclick="getQuestion()">Pytanie</button>
+    <button class="button challenge-btn" onclick="getChallenge()">Wyzwanie</button>
+    <button class="button next-btn" onclick="nextPlayer()">Następny gracz</button>
+  </div>
+
+  <div id="output"></div>
+
+  <div class="form-container">
+    <h3>Dodaj swoje pytanie:</h3>
+    <input type="text" id="newQuestion" placeholder="Wpisz pytanie">
+    <button class="button question-btn" onclick="addQuestion()">Dodaj pytanie</button>
+
+    <h3>Dodaj swoje wyzwanie:</h3>
+    <input type="text" id="newChallenge" placeholder="Wpisz wyzwanie">
+    <button class="button challenge-btn" onclick="addChallenge()">Dodaj wyzwanie</button>
+    <h3></h3>
+    <button class="button reset-btn" onclick="resetData()">Restart</button>
+
+    <p id="message"></p>
+  </div>
+
+  <div id="history">
+    <h3>Historia:</h3>
+    <ul id="historyList"></ul>
+  </div>
+
+  <script>
+  let playerNames = [];
+  let currentPlayer = 0;
+  let currentDifficulty = "easy";
+
+  const questionsDB = {
+    easy: [
+      "Jaki jest twój ulubiony kolor?",
+      "Jak masz na imię?",
+      "Ile masz lat?"
+    ],
+    medium: [
+      "Kim naprawdę jesteś, gdy nikt nie patrzy?",
+      "Czego najbardziej się boisz?",
+      "Czy uważasz, że jesteś szczęśliwy/a?"
+    ],
+    hard: [
+      "Jaka była Twoja najbardziej szalona fantazja?",
+      "Czy lubisz przejmować kontrolę, czy być prowadzonym/ą?",
+      "Co Cię najbardziej podnieca u drugiej osoby?"
+    ]
+  };
+
+  const challengesDB = {
+    easy: [
+      "Wypij 2 szklanki wody",
+      "Zrób sobie herbatę i usiądź na 10 minut w ciszy",
+      "Napisz 3 rzeczy, za które jesteś dziś wdzięczny/a"
+    ],
+    medium: [
+      "Zadzwoń do losowej osoby z kontaktów i powiedz, że za nią tęsknisz",
+      "Zjedz łyżkę musztardy, keczupu lub ostrego sosu",
+      "Zatańcz bez muzyki przez 1 minutę, patrząc komuś w oczy"
+    ],
+    hard: [
+      "Pokaż ostatnie zdjęcie w swojej galerii.",
+      "Zatańcz jak gwiazda TikToka przez 20 sekund.",
+      "Zadzwoń do kogoś i powiedz tylko jedno słowo – nie tłumacz się"
+    ]
+  };
+
+  let questions = [];
+  let challenges = [];
+
+  function getSavedArray(key, fallback = []) {
+    const stored = localStorage.getItem(key);
+    try {
+      return stored ? JSON.parse(stored) : fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
+  function saveArray(key, array) {
+    localStorage.setItem(key, JSON.stringify(array));
+  }
+
+  function startGame() {
+    const input = document.getElementById("playerNamesInput").value.trim();
+    const difficulty = document.getElementById("difficulty").value;
+
+    if (!input) {
+      alert("Wprowadź co najmniej jedno imię gracza.");
+      return;
+    }
+
+    if (questions.includes(newQuestion)) {
+	alert("To pytanie już istnieje!");
+	return;
+    }
+
+
+    playerNames = input.split(",").map(name => name.trim()).filter(name => name);
+    if (playerNames.length === 0) {
+      alert("Podaj poprawne imiona graczy.");
+      return;
+    }
+
+    currentDifficulty = difficulty;
+
+    const baseQuestions = [...questionsDB[difficulty]];
+    const baseChallenges = [...challengesDB[difficulty]];
+
+    const userQuestions = getSavedArray(`user_questions_${difficulty}`);
+    const userChallenges = getSavedArray(`user_challenges_${difficulty}`);
+
+    const savedQuestions = getSavedArray(`questions_${difficulty}`);
+    const savedChallenges = getSavedArray(`challenges_${difficulty}`);
+
+    questions = savedQuestions.length > 0 ? savedQuestions : [...baseQuestions, ...userQuestions];
+    challenges = savedChallenges.length > 0 ? savedChallenges : [...baseChallenges, ...userChallenges];
+
+    // Save combined for this session
+    saveArray(`questions_${difficulty}`, questions);
+    saveArray(`challenges_${difficulty}`, challenges);
+
+    currentPlayer = 0;
+    document.getElementById("playerName").innerText = playerNames[currentPlayer];
+    document.getElementById("playerSetup").style.display = "none";
+    document.getElementById("gameArea").style.display = "block";
+    document.getElementById("gameControls").style.display = "block";
+  }
+
+  function getRandomItemAndRemove(array, storageKey) {
+    const index = Math.floor(Math.random() * array.length);
+    const item = array.splice(index, 1)[0];
+    saveArray(storageKey, array);
+    return item;
+  }
+
+  function addToHistory(text) {
+    const li = document.createElement("li");
+    li.textContent = text;
+    document.getElementById("historyList").appendChild(li);
+  }
+
+  function getQuestion() {
+    if (questions.length === 0) {
+      document.getElementById("output").innerText = "Brak dostępnych pytań.";
+      return;
+    }
+    const question = getRandomItemAndRemove(questions, `questions_${currentDifficulty}`);
+    const text = `Pytanie dla ${playerNames[currentPlayer]}: ${question}`;
+    document.getElementById("output").innerText = text;
+    addToHistory(text);
+  }
+
+  function getChallenge() {
+    if (challenges.length === 0) {
+      document.getElementById("output").innerText = "Brak dostępnych wyzwań.";
+      return;
+    }
+    const challenge = getRandomItemAndRemove(challenges, `challenges_${currentDifficulty}`);
+    const text = `Wyzwanie dla ${playerNames[currentPlayer]}: ${challenge}`;
+    document.getElementById("output").innerText = text;
+    addToHistory(text);
+  }
+
+  function nextPlayer() {
+    currentPlayer = (currentPlayer + 1) % playerNames.length;
+    document.getElementById("playerName").innerText = playerNames[currentPlayer];
+    document.getElementById("output").innerText = "";
+  }
+
+  function addQuestion() {
+    const newQuestion = document.getElementById("newQuestion").value.trim();
+    if (newQuestion) {
+      questions.push(newQuestion);
+      saveArray(`questions_${currentDifficulty}`, questions);
+
+      // save also to user-added list
+      const userQuestions = getSavedArray(`user_questions_${currentDifficulty}`);
+      userQuestions.push(newQuestion);
+      saveArray(`user_questions_${currentDifficulty}`, userQuestions);
+
+      document.getElementById("newQuestion").value = "";
+      document.getElementById("message").innerText = "Dodano nowe pytanie!";
+      setTimeout(() => document.getElementById("message").innerText = "", 2000);
+    }
+  }
+  function resetData() {
+	localStorage.clear();
+	alert("Wszystkie dane zostały usunięte.");
+  	location.reload();
+  }
+
+
+  function addChallenge() {
+    const newChallenge = document.getElementById("newChallenge").value.trim();
+    if (newChallenge) {
+      challenges.push(newChallenge);
+      saveArray(`challenges_${currentDifficulty}`, challenges);
+
+      // save also to user-added list
+      const userChallenges = getSavedArray(`user_challenges_${currentDifficulty}`);
+      userChallenges.push(newChallenge);
+      saveArray(`user_challenges_${currentDifficulty}`, userChallenges);
+
+      document.getElementById("newChallenge").value = "";
+      document.getElementById("message").innerText = "Dodano nowe wyzwanie!";
+      setTimeout(() => document.getElementById("message").innerText = "", 2000);
+    }
+  }
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js").then(() => {
+    console.log("Service Worker zarejestrowany!");
+  }).catch(error => {
+    console.error("Błąd rejestracji Service Workera:", error);
+  });
+}
+
+</script>
+
+
+</body>
+</html>
+
