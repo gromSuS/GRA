@@ -248,7 +248,7 @@
       "Czego najbardziej się boisz?",
       "Czy uważasz, że jesteś szczęśliwy/a?",
       "Czy potrafisz wybaczyć komuś, kto cię bardzo zranił?",
-      "Na czym najbardziej ci zależy w życiu?"
+      "Na czym najbardziej ci zależy w życiu?",
       "Czy jesteś w stanie przyznać się do błędu?",
       "Jakie wydarzenie najbardziej cię ukształtowało?",
       "Co byś zmienił/a w swoim dzieciństwie?",
@@ -497,11 +497,6 @@
       return;
     }
 
-    if (questions.includes(newQuestion)) {
-	alert("To pytanie już istnieje!");
-	return;
-    }
-
 
     playerNames = input.split(",").map(name => name.trim()).filter(name => name);
     if (playerNames.length === 0) {
@@ -577,7 +572,11 @@
 
   function addQuestion() {
     const newQuestion = document.getElementById("newQuestion").value.trim();
-    if (newQuestion) {
+    if (questions.includes(newQuestion)) {
+	alert("To pytanie już istnieje!");
+	return;
+    }
+	  if (newQuestion) {
       questions.push(newQuestion);
       saveArray(`questions_${currentDifficulty}`, questions);
 
@@ -600,7 +599,11 @@
 
   function addChallenge() {
     const newChallenge = document.getElementById("newChallenge").value.trim();
-    if (newChallenge) {
+    if (challenges.includes(newChallenge)) {
+	alert("To wyzwanie już istnieje!");
+	return;
+    }
+	  if (newChallenge) {
       challenges.push(newChallenge);
       saveArray(`challenges_${currentDifficulty}`, challenges);
 
