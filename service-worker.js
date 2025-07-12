@@ -1,7 +1,7 @@
 const CACHE_NAME = "pyt-wyz-cache-v1";
 const urlsToCache = [
     "/",
-    "/index.html",
+    "/strona.html",
     "/manifest.json",
     "/icon-192.png",
     "/icon-512.png"
